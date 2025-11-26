@@ -1,5 +1,6 @@
 package com.staff.employee.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 @Configuration
 @EnableMethodSecurity
@@ -28,6 +34,11 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+
+    // Read allowed origins from application properties; default to the deployed frontend
+    // Use SpEL to split comma-separated values into a String[] safely
+    @Value("#{'${app.cors.allowed-origins:https://staff-portal-ui-ez7c.vercel.app}'.split(',')}")
+    private String[] allowedOrigins;
 
     public SecurityConfig(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
@@ -51,6 +62,8 @@ public class SecurityConfig {
         JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtUtil);
 
         http
+                // Enable CORS and provide configuration via CorsConfigurationSource bean
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // Disable CSRF entirely for this stateless JWT API
                 .csrf(csrf -> csrf.disable())
                 // Return 401 Unauthorized for unauthenticated requests instead of default 403
@@ -74,6 +87,25 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         ;
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        // Allow the frontend origins from configuration. Use Arrays.asList to convert the array.
+        config.setAllowedOrigins(Arrays.asList(allowedOrigins));
+        // Standard methods including OPTIONS for preflight
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+        // Allow common headers from the client (Authorization will be included)
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept"));
+        // Allow credentials (cookies, authorization headers). Set to false if not needed.
+        config.setAllowCredentials(true);
+        // Expose Authorization header if clients need to read it from responses
+        config.setExposedHeaders(List.of("Authorization"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Bean
