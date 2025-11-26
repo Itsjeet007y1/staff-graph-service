@@ -1,0 +1,30 @@
+# Example application.properties for staff-graph-service
+# Copy to src/main/resources/application.properties and fill values for local development
+
+spring.application.name=staff-graph-service
+spring.datasource.url=jdbc:h2:mem:staff;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+spring.datasource.username=sa
+spring.datasource.password=
+spring.datasource.driverClassName=org.h2.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.datasource.hikari.maximum-pool-size=10
+
+# JWT - replace or set SECURITY_JWT_SECRET env var
+security.jwt.secret=${SECURITY_JWT_SECRET:changeit-changeit-changeit-changeit}
+security.jwt.expiration-ms=86400000
+
+# GraphQL
+spring.graphql.graphiql.enabled=true
+spring.graphql.graphiql.path=/graphiql
+
+# Logging
+logging.level.org.springframework=INFO
+logging.level.com.staff=DEBUG
+logging.level.org.springframework.security=DEBUG
+logging.level.org.springframework.security.web=DEBUG
+
+# H2 Console
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+

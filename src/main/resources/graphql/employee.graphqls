@@ -1,0 +1,42 @@
+type Employee {
+  id: ID!
+  name: String!
+  age: Int
+  department: String
+  skills: [String]
+  attendance: Int
+}
+
+input EmployeeInput {
+  name: String!
+  age: Int!
+  department: String
+  skills: [String]
+  attendance: Int
+}
+
+input EmployeeFilter {
+  nameContains: String
+  minAge: Int
+  maxAge: Int
+  department: String
+}
+
+type EmployeePage {
+  content: [Employee]
+  # GraphQL's built-in Int is a 32-bit signed integer. Use it here unless you need >2^31-1,
+  # otherwise declare a custom scalar for 64-bit Long.
+  totalElements: Int
+  totalPages: Int
+}
+
+type Query {
+  listEmployees(filter: EmployeeFilter, page: Int = 0, size: Int = 10, sort: String): EmployeePage
+  employee(id: ID!): Employee
+}
+
+type Mutation {
+  addEmployee(input: EmployeeInput!): Employee
+  updateEmployee(id: ID!, input: EmployeeInput!): Employee
+  deleteEmployee(id: ID!): Boolean
+}

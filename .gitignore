@@ -1,0 +1,62 @@
+# .gitignore for a Java Spring Boot Maven project (IntelliJ/Windows)
+
+# Maven build output
+/target/
+
+# Eclipse/IntelliJ project files
+/.idea/
+*.iml
+/.classpath
+/.project
+/.settings/
+/out/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local environment/security
+/.env
+src/main/resources/application.properties
+!src/main/resources/application.properties.example
+
+# Maven wrapper - keep wrapper jar if used
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.jar
+
+# Java
+*.class
+*.jar
+
+# IDEs
+.vscode/
+
+# Temporary files
+*.tmp
+*.swp
+
+# Others
+node_modules/
+coverage/
+
+# Ignore build artifacts produced by the IDE
+# (sometimes stored in the project root)
+build/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# IntelliJ workspace
+.idea/
+
+# Keep README, LICENSE, and other docs tracked
+!README.md
+!LICENSE
+
