@@ -58,6 +58,48 @@ curl -H "Content-Type: application/json" -H "Authorization: Bearer <token>" \
   http://localhost:8080/graphql
 ```
 
+Example curl requests
+
+Below are example PowerShell-friendly curl commands you can use against a locally running server (http://localhost:8080). Replace <token> with the JWT returned from the login command.
+
+1) LOGIN (JWT Token Generation)
+
+```powershell
+curl.exe -i -X POST "http://localhost:8080/auth/login" `
+  -H "Content-Type: application/json" `
+  -d '{"username":"admin","password":"adminpass"}'
+```
+
+2) LIST EMPLOYEES (GraphQL Query)
+
+```powershell
+curl.exe -i -X POST "http://localhost:8080/graphql" `
+  -H "Content-Type: application/json" `
+  -H "Accept: application/json" `
+  -H "Authorization: Bearer <token>" `
+  -d '{"query":"query { listEmployees { totalElements totalPages content { id name age className subjects attendance }}}"}'
+```
+
+3) ADD EMPLOYEE (GraphQL Mutation)
+
+```powershell
+curl.exe -i -X POST "http://localhost:8080/graphql" `
+  -H "Content-Type: application/json" `
+  -H "Accept: application/json" `
+  -H "Authorization: Bearer <token>" `
+  -d '{"query":"mutation { addEmployee(input: { name:\"John Doe\", age:30, className:\"A1\", subjects:[\"Math\",\"Science\"], attendance:95 }) { id name age className subjects attendance }}"}'
+```
+
+4) UPDATE EMPLOYEE (GraphQL Mutation)
+
+```powershell
+curl.exe -i -X POST "http://localhost:8080/graphql" `
+  -H "Content-Type: application/json" `
+  -H "Accept: application/json" `
+  -H "Authorization: Bearer <token>" `
+  -d '{"query":"mutation { updateEmployee(id:\"4\", input: { name:\"John Doe\", age:31, className:\"A1\", subjects:[\"Math\",\"Physics\"], attendance:96 }) { id name age className subjects attendance }}"}'
+```
+
 Notes
 - `src/main/resources/application.properties` is excluded from source control by `.gitignore`. Commit `application.properties.example` instead and never commit real secrets.
 - If you accidentally committed large/binary files or secrets, consider cleaning history with BFG or `git filter-branch` (coordinate with your team).
